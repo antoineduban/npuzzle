@@ -10,9 +10,10 @@ def heuristic(puzzle_size, puzzle):
     finalScore = 0
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
-            xtarget = (val-1) / puzzle_size
-            ytarget = (val-1) % puzzle_size
-            finalScore += abs(xtarget - x) + abs(ytarget - y)
+            if val != 0:
+                xtarget = int((val-1) / puzzle_size)
+                ytarget = int((val-1) % puzzle_size)
+                finalScore += abs(xtarget - x) + abs(ytarget - y)
     return finalScore
 
 def getLowestFScore(puzzle_size, openSet):
@@ -76,8 +77,6 @@ def solve(puzzle_size, start):
 
     while openSet:
         current = getLowestFScore(puzzle_size, openSet)
-        p(current)
-        time.sleep(3)
         if heuristic(puzzle_size, current) == 0:
             print("FINISHED")
             return 1
