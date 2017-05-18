@@ -1,8 +1,7 @@
 import copy
 from collections import defaultdict
 import json
-
-WIDTH = 3
+import time
 
 def heuristic(puzzle):
     finalScore = 0
@@ -23,7 +22,7 @@ def getLowestFScore(openSet):
             toReturn = s
     return toReturn
         
-def getNeighbors(current):
+def getNeighbors(puzzle_size, current):
     xcoord = -1
     ycoord = -1
     newSets = []
@@ -35,7 +34,7 @@ def getNeighbors(current):
                 break
         if xcoord != -1:
             break
-    if (xcoord + 1 < WIDTH): 
+    if (xcoord + 1 < puzzle_size): 
         newSet = copy.deepcopy(current)
         newSet[xcoord][ycoord] = newSet[xcoord + 1][ycoord]
         newSet[xcoord + 1][ycoord] = 0
@@ -45,7 +44,7 @@ def getNeighbors(current):
         newSet[xcoord][ycoord] = newSet[xcoord - 1][ycoord]
         newSet[xcoord - 1][ycoord] = 0
         newSets.append(newSet)
-    if (ycoord + 1 < WIDTH): 
+    if (ycoord + 1 < puzzle_size): 
         newSet = copy.deepcopy(current)
         newSet[xcoord][ycoord] = newSet[xcoord][ycoord + 1]
         newSet[xcoord][ycoord + 1] = 0
@@ -65,7 +64,7 @@ def p(puzzle):
 
 
 
-def solve(start):
+def solve(puzzle_size, start):
     closedSet = []
     openSet = [start]
     cameFrom = {}
@@ -76,12 +75,14 @@ def solve(start):
 
     while openSet:
         current = getLowestFScore(openSet)
+        p(current)
+        time.sleep(3)
         if heuristic(current) == 0:
             print("FINISHED")
             return 1
         openSet.remove(current)
         closedSet.append(current)
-        neighbors = getNeighbors(current)
+        neighbors = getNeighbors(puzzle_size, current)
         for s in neighbors:
             if s in closedSet:
                 continue
@@ -94,5 +95,9 @@ def solve(start):
             gScore[json.dumps(s)] = tentative_gScore
             fScore[json.dumps(s)] = gScore[json.dumps(s)] + heuristic(s)
 
+    
+
+    for Set in closedSet:
+        p(Set)
     print("FAILED")
     return -1
