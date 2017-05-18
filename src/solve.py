@@ -65,7 +65,6 @@ def p(puzzle):
 
 
 def solve(start):
-    start = [[2, 6, 3],[1, 8, 0],[4, 5, 7]]
     closedSet = []
     openSet = [start]
     cameFrom = {}
@@ -82,7 +81,6 @@ def solve(start):
         openSet.remove(current)
         closedSet.append(current)
         p(current)
-        print("POSSIBILITIES")
         neighbors = getNeighbors(current)
         for s in neighbors:
             if s in closedSet:
