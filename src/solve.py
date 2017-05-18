@@ -8,8 +8,8 @@ def heuristic(puzzle):
     finalScore = 0
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
-            xtarget = (val-1) / 3
-            ytarget = (val-1) % 3
+            xtarget = (val-1) / WIDTH
+            ytarget = (val-1) % WIDTH
             finalScore += abs(xtarget - x) + abs(ytarget - y)
 
     return finalScore
@@ -64,7 +64,6 @@ def p(puzzle):
     print()
 
 
-
 def solve(start):
     closedSet = []
     openSet = [start]
@@ -82,6 +81,8 @@ def solve(start):
         openSet.remove(current)
         closedSet.append(current)
         neighbors = getNeighbors(current)
+        if len(openSet) % 1000 == 0:
+            print(len(openSet))
         for s in neighbors:
             if s in closedSet:
                 continue
