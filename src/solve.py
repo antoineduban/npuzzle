@@ -1,17 +1,19 @@
 import copy
+import time
 from collections import defaultdict
 import json
 
 WIDTH = 3
 
+
 def heuristic(puzzle):
     finalScore = 0
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
-            xtarget = (val-1) / WIDTH
-            ytarget = (val-1) % WIDTH
-            finalScore += abs(xtarget - x) + abs(ytarget - y)
-
+            if (val != 0):
+                xtarget = int((val-1) / WIDTH)
+                ytarget = int((val-1) % WIDTH)
+                finalScore += abs(xtarget - x) + abs(ytarget - y)
     return finalScore
 
 def getLowestFScore(openSet):
@@ -76,13 +78,12 @@ def solve(start):
     while openSet:
         current = getLowestFScore(openSet)
         if heuristic(current) == 0:
+            print(current)
             print("FINISHED")
             return 1
         openSet.remove(current)
         closedSet.append(current)
         neighbors = getNeighbors(current)
-        if len(openSet) % 1000 == 0:
-            print(len(openSet))
         for s in neighbors:
             if s in closedSet:
                 continue
