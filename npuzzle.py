@@ -12,6 +12,6 @@ def main():
     print('puzzle_size {:d}\n'.format(puzzle_size))
 
     core.display(puzzle)
-    solve.solve(puzzle)
+    solve.solve(puzzle_size, puzzle)
 
 main()
