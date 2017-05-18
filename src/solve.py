@@ -3,22 +3,22 @@ from collections import defaultdict
 import json
 import time
 
-def heuristic(puzzle):
+def heuristic(puzzle_size, puzzle):
     finalScore = 0
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
-            xtarget = (val-1) / 3
-            ytarget = (val-1) % 3
+            xtarget = (val-1) / puzzle_size
+            ytarget = (val-1) % puzzle_size
             finalScore += abs(xtarget - x) + abs(ytarget - y)
 
     return finalScore
 
-def getLowestFScore(openSet):
+def getLowestFScore(puzzle_size, openSet):
     lowest = 1000
     toReturn = None
     for s in openSet:
-        if heuristic(s) < lowest:
-            lowest = heuristic(s)
+        if heuristic(puzzle_size, s) < lowest:
+            lowest = heuristic(puzzle_size, s)
             toReturn = s
     return toReturn
         
@@ -63,7 +63,6 @@ def p(puzzle):
     print()
 
 
-
 def solve(puzzle_size, start):
     closedSet = []
     openSet = [start]
@@ -71,18 +70,20 @@ def solve(puzzle_size, start):
     gScore = defaultdict(lambda: 9999)
     gScore[json.dumps(start)] = 0
     fScore = defaultdict(lambda: 9999)
-    fScore[json.dumps(start)] = heuristic(start)
+    fScore[json.dumps(start)] = heuristic(puzzle_size, start)
 
     while openSet:
-        current = getLowestFScore(openSet)
+        current = getLowestFScore(puzzle_size, openSet)
         p(current)
         time.sleep(3)
-        if heuristic(current) == 0:
+        if heuristic(puzzle_size, current) == 0:
             print("FINISHED")
             return 1
         openSet.remove(current)
         closedSet.append(current)
         neighbors = getNeighbors(puzzle_size, current)
+        if len(openSet) % 1000 == 0:
+            print(len(openSet))
         for s in neighbors:
             if s in closedSet:
                 continue
@@ -93,7 +94,7 @@ def solve(puzzle_size, start):
                 continue
             cameFrom[json.dumps(s)] = current
             gScore[json.dumps(s)] = tentative_gScore
-            fScore[json.dumps(s)] = gScore[json.dumps(s)] + heuristic(s)
+            fScore[json.dumps(s)] = gScore[json.dumps(s)] + heuristic(puzzle_size, s)
 
     
 
