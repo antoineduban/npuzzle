@@ -1,4 +1,5 @@
 import copy
+from collections import defaultdict
 import json
 
 WIDTH = 3
@@ -68,9 +69,9 @@ def solve(start):
     closedSet = []
     openSet = [start]
     cameFrom = {}
-    gScore = {}
+    gScore = defaultdict(lambda: 9999)
     gScore[json.dumps(start)] = 0
-    fScore = {}
+    fScore = defaultdict(lambda: 9999)
     fScore[json.dumps(start)] = heuristic(start)
 
     while openSet:
@@ -80,7 +81,6 @@ def solve(start):
             return 1
         openSet.remove(current)
         closedSet.append(current)
-        p(current)
         neighbors = getNeighbors(current)
         for s in neighbors:
             if s in closedSet:
