@@ -39,7 +39,7 @@ def getNeighbors(current):
         newSet[xcoord][ycoord] = newSet[xcoord + 1][ycoord]
         newSet[xcoord + 1][ycoord] = 0
         newSets.append(newSet)
-    if (xcoord - 1 > 0): 
+    if (xcoord - 1 >= 0): 
         newSet = copy.deepcopy(current)
         newSet[xcoord][ycoord] = newSet[xcoord - 1][ycoord]
         newSet[xcoord - 1][ycoord] = 0
@@ -49,7 +49,7 @@ def getNeighbors(current):
         newSet[xcoord][ycoord] = newSet[xcoord][ycoord + 1]
         newSet[xcoord][ycoord + 1] = 0
         newSets.append(newSet)
-    if (ycoord - 1 > 0): 
+    if (ycoord - 1 >= 0): 
         newSet = copy.deepcopy(current)
         newSet[xcoord][ycoord] = newSet[xcoord][ycoord - 1]
         newSet[xcoord][ycoord - 1] = 0
