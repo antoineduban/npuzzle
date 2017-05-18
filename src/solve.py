@@ -98,9 +98,3 @@ def solve(start):
 
     print("FAILED")
     return -1
-
-
-
-
-if __name__ == "__main__":
-    solve(None)
