@@ -16,8 +16,8 @@ def heuristic2(puzzle_size, puzzle, end):
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
             if val != 0:
-                xtarget = int((val-1) / puzzle_size)
-                ytarget = int((val-1) % puzzle_size)
+                xtarget = (val-1) // puzzle_size
+                ytarget = (val-1) % puzzle_size
                 finalScore += abs(xtarget - x) + abs(ytarget - y)
     return finalScore
 
@@ -83,6 +83,18 @@ def p(puzzle):
         print(row)
     print()
 
+def reconstruct(cameFrom, current):
+    total = [current]
+    while True:
+        current_json = json.dumps(current)
+        try:
+            current = cameFrom[current_json]
+        except:
+            break
+        total.append(current)
+    for i in reversed(total):
+        p(i)
+
 def solve(puzzle_size, start, end):
     p(start)
     start_json = json.dumps(start)
@@ -105,9 +117,8 @@ def solve(puzzle_size, start, end):
         current = openSetHash[current_json]
 
         if heuristic(puzzle_size, current, end) == 0:
-            p(current)
-            print(gScore[current_json])
             print("FINISHED")
+            reconstruct(cameFrom, current)
             return 1
 
         del openSetHash[current_json]
@@ -122,10 +133,7 @@ def solve(puzzle_size, start, end):
             if not neighbor_json in openSetHash:
                 cameFrom[neighbor_json] = current
                 gScore[neighbor_json] = tentative_gScore
-                fScore[neighbor_json] = (
-                    gScore[neighbor_json] +
-                    heuristic(puzzle_size, neighbor, end)
-                )
+                fScore[neighbor_json] = heuristic(puzzle_size, neighbor, end)
                 openSet.put((fScore[neighbor_json], neighbor_json))
                 openSetHash[neighbor_json] = neighbor
             elif tentative_gScore >= gScore[neighbor_json]:
