@@ -39,8 +39,8 @@ def endPuzzle(size):
 
 def main():
     (puzzle_size, puzzle, heuristic) = core.init()
-    print('puzzle_size {:d}\n'.format(puzzle_size))
 
+    print("======================================")
     #puzzle_size = 5
     #res = [
     #    [  1,  5,  3,  4,  2],
@@ -49,20 +49,15 @@ def main():
     #    [ 14, 23, 22, 21,  8],
     #    [ 13, 12, 11, 10,  9],
     #]
-    #puzzle = endPuzzle(puzzle_size)
-    puzzle_size = 3
-    res = [
-        [ 1, 2, 3 ],
-        [ 0, 4, 6 ],
-        [ 7, 5, 8 ]
-    ]
+    puzzle, empty = endPuzzle(puzzle_size)
     print("Puzzle initial")
     core.display(puzzle)
-    #for i in range(1000):
-    #    puzzle, empty = randSwapEmpty(puzzle, puzzle_size, empty)
-        #core.display(puzzle)
-    #print("Puzzle mixed")
-    #core.display(puzzle)
+    for i in range(1000):
+        puzzle, empty = randSwapEmpty(puzzle, puzzle_size, empty)
+    #     core.display(puzzle)
+    print("Puzzle mixed")
+    core.display(puzzle)
+
     solve.solve(puzzle_size, puzzle)
     print("Puzzle solved")
     core.display(puzzle)
