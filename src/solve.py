@@ -75,16 +75,20 @@ def p(puzzle):
     print()
 
 def solve(puzzle_size, start):
+    start_json = json.dumps(start)
+
     closedSet = []
     openSet = [start]
     cameFrom = {}
     gScore = defaultdict(lambda: 9999)
-    gScore[json.dumps(start)] = 0
+    gScore[start_json] = 0
     fScore = defaultdict(lambda: 9999)
-    fScore[json.dumps(start)] = heuristic(puzzle_size, start)
+    fScore[start_json] = heuristic(puzzle_size, start)
 
     while openSet:
         current = getLowestFScore(puzzle_size, openSet, fScore)
+        current_json = json.dumps(current)
+
         if heuristic(puzzle_size, current) == 0:
             p(current)
             print("FINISHED")
@@ -95,14 +99,17 @@ def solve(puzzle_size, start):
         for s in neighbors:
             if s in closedSet:
                 continue
-            tentative_gScore = gScore[json.dumps(current)] + 1
+            neighbor_json = json.dumps(s)
+
+            tentative_gScore = gScore[current_json] + 1
             if s not in openSet:
                 openSet.append(s)
-            elif tentative_gScore >= gScore[json.dumps(s)]:
+            elif tentative_gScore >= gScore[neighbor_json]:
                 continue
-            cameFrom[json.dumps(s)] = current
-            gScore[json.dumps(s)] = tentative_gScore
-            fScore[json.dumps(s)] = gScore[json.dumps(s)] + heuristic(puzzle_size, s)
+
+            cameFrom[neighbor_json] = current
+            gScore[neighbor_json] = tentative_gScore
+            fScore[neighbor_json] = gScore[neighbor_json] + heuristic(puzzle_size, s)
 
     print("FAILED")
     return -1
