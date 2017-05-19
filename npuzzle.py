@@ -24,6 +24,7 @@ def main():
    #    [ 4, 5, 6],
    #    [ 7, 8, 0]
    #]
+
     solve.solve(puzzle_size, puzzle)
     print("Puzzle solved")
     core.display(puzzle)
