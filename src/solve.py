@@ -1,4 +1,5 @@
 import copy
+from blist import *
 import time
 from collections import defaultdict
 import json
@@ -48,6 +49,12 @@ def findEmptyCase(puzzle):
                 return (x, y)
     return None
 
+def deepcopy(current):
+    l = []
+    for i in current:
+        l.append(list(i))
+    return l
+
 def getNeighbors(puzzle_size, current):
     x0, y0 = findEmptyCase(current)
 
@@ -62,7 +69,7 @@ def getNeighbors(puzzle_size, current):
     for test in tests:
         x, y = test
         if isValid(x, y, puzzle_size):
-            newSet = copy.deepcopy(current)
+            newSet = deepcopy(current)
             newSet[x0][y0] = newSet[x][y]
             newSet[x][y] = 0
             newSets.append(newSet)
@@ -87,13 +94,17 @@ def insert(a, x):
             hi = mid
     a.insert(lo, x)
 
+
 def solve(puzzle_size, start, end):
+    p(start)
     start_json = json.dumps(start)
 
     start_fScore = heuristic(puzzle_size, start, end)
 
     closedSet = {}
-    openSet = [(start, start_fScore)]
+    openSet = blist([(start, start_fScore)])
+    openSetHash = {}
+    openSetHash[json.dumps(start)] = start
     cameFrom = {}
     gScore = defaultdict(lambda: 9999)
     gScore[start_json] = 0
@@ -105,20 +116,22 @@ def solve(puzzle_size, start, end):
         current_json = json.dumps(current)
 
         if heuristic(puzzle_size, current, end) == 0:
+
             p(current)
+            print(gScore[current_json])
             print("FINISHED")
             return 1
 
         openSet.pop(0)
+        del openSetHash[current_json]
         closedSet[current_json] = current
-
         for neighbor in getNeighbors(puzzle_size, current):
             neighbor_json = json.dumps(neighbor)
             if neighbor_json in closedSet:
                 continue
 
             tentative_gScore = gScore[current_json] + 1
-            if not any(s[0] == neighbor for s in openSet):
+            if not neighbor_json in openSetHash:
                 cameFrom[neighbor_json] = current
                 gScore[neighbor_json] = tentative_gScore
                 fScore[neighbor_json] = (
@@ -126,6 +139,7 @@ def solve(puzzle_size, start, end):
                     heuristic(puzzle_size, neighbor, end)
                 )
                 insert(openSet, (neighbor, fScore[neighbor_json]))
+                openSetHash[neighbor_json] = neighbor
             elif tentative_gScore >= gScore[neighbor_json]:
                 continue
 
