@@ -26,9 +26,9 @@ def heuristic(puzzle_size, puzzle):
 def getLowestFScore(puzzle_size, openSet, fScore):
     lowest = 1000
     toReturn = None
-    for s in openSet:
+    for s_json, s in openSet.items():
         #h = heuristic(puzzle_size, s)
-        s_json = json.dumps(s)
+        #s_json = json.dumps(s)
         if fScore[s_json] < lowest:
         #if h < lowest:
             lowest = fScore[s_json]
@@ -77,8 +77,9 @@ def p(puzzle):
 def solve(puzzle_size, start):
     start_json = json.dumps(start)
 
-    closedSet = []
-    openSet = [start]
+    closedSet = {}
+    openSet = {}
+    openSet[start_json] = start
     cameFrom = {}
     gScore = defaultdict(lambda: 9999)
     gScore[start_json] = 0
@@ -93,17 +94,17 @@ def solve(puzzle_size, start):
             p(current)
             print("FINISHED")
             return 1
-        openSet.remove(current)
-        closedSet.append(current)
+        del openSet[current_json]
+        closedSet[current_json] = current
         neighbors = getNeighbors(puzzle_size, current)
         for s in neighbors:
-            if s in closedSet:
-                continue
             neighbor_json = json.dumps(s)
+            if neighbor_json in closedSet:
+                continue
 
             tentative_gScore = gScore[current_json] + 1
-            if s not in openSet:
-                openSet.append(s)
+            if neighbor_json not in openSet:
+                openSet[neighbor_json] = s
             elif tentative_gScore >= gScore[neighbor_json]:
                 continue
 
