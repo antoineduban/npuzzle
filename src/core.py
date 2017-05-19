@@ -5,8 +5,6 @@ import getopt
 import random
 
 def getFinalCoords(puzzle_size):
-    nbs = (puzzle_size * puzzle_size) - 1
-    
     x = 0
     y = 0
     lim = 0
@@ -34,6 +32,10 @@ def getFinalCoords(puzzle_size):
         lim += 1
         if x >= puzzle_size - lim and y >= puzzle_size - lim:
                 break
+    try: 
+        del ret[puzzle_size * puzzle_size]
+    except:
+        pass
     return ret
 
 def findEmpty(puzzle):
