@@ -36,6 +36,13 @@ def getFinalCoords(puzzle_size):
                 break
     return ret
 
+def findEmpty(puzzle):
+    for x, row in enumerate(puzzle):
+        for y, case in enumerate(row):
+            if case == 0:
+                return (x, y)
+    return None
+
 # Random puzzle gen
 def isValid(p, puzzle_size):
     x, y = p
@@ -64,12 +71,12 @@ def randomPuzzle(size):
 
     puzzle = [[int(0) for _ in range(size)] for _ in range(size)]
 
-    x, y = 0, 0
     for k, v in end.items():
         x, y = v
         puzzle[x][y] = k
 
-    empty = (x, y)
+    empty = findEmpty(puzzle)
+    x, y = empty
     puzzle[x][y] = 0
 
     print("Puzzle initial")
