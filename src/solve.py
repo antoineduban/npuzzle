@@ -5,7 +5,7 @@ import json
 import time
 import core
 
-def manhattan(puzzle_size, puzzle):
+def getFinalCoords(puzzle_size, puzzle):
     nbs = (puzzle_size * puzzle_size) - 1
 
 
