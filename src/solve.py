@@ -11,13 +11,10 @@ def manhattan(puzzle_size, puzzle):
 
     x = 0
     y = 0
-    while puzzle[y]:
-        while puzzle[y][x]:
-            print(puzzle[y][x])
 
 def heuristic(puzzle_size, puzzle):
     finalScore = 0
-    manhattan(puzzle_size, puzzle)
+#    manhattan(puzzle_size, puzzle)
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
             if val != 0:
@@ -89,6 +86,7 @@ def solve(puzzle_size, start):
     while openSet:
         current = getLowestFScore(puzzle_size, openSet, fScore)
         if heuristic(puzzle_size, current) == 0:
+            p(current)
             print("FINISHED")
             return 1
         openSet.remove(current)
