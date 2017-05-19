@@ -8,7 +8,7 @@ import core
 import solve
 
 def main():
-    (puzzle_size, puzzle, heuristic) = core.init()
+    (size, start, end, heuristic) = core.init()
 
     print("======================================")
     #puzzle_size = 5
@@ -25,8 +25,7 @@ def main():
    #    [ 7, 8, 0]
    #]
 
-    solve.solve(puzzle_size, puzzle)
+    solve.solve(size, start, end)
     print("Puzzle solved")
-    core.display(puzzle)
 
 main()

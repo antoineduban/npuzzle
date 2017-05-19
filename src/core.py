@@ -4,6 +4,38 @@ import sys
 import getopt
 import random
 
+def getFinalCoords(puzzle_size):
+    nbs = (puzzle_size * puzzle_size) - 1
+    
+    x = 0
+    y = 0
+    lim = 0
+    ret = {}
+    count = 1
+    while True:
+        while x + 1 < puzzle_size - lim:
+            ret[count] = [y,x]
+            count += 1
+            x += 1
+        while y + 1< puzzle_size - lim:
+            ret[count] = [y,x]
+            count += 1
+            y += 1
+        while x - 1>= 0 + lim:
+            ret[count] = [y,x]
+            count += 1
+            x -= 1
+        while y - 1 >= 0 + lim:
+            ret[count] = [y,x]
+            count += 1
+            y -= 1
+        x += 1
+        y += 1
+        lim += 1
+        if x >= puzzle_size - lim and y >= puzzle_size - lim:
+                break
+    return ret
+
 # Random puzzle gen
 def isValid(p, puzzle_size):
     x, y = p
@@ -27,17 +59,23 @@ def randSwapEmpty(puzzle, puzzle_size, empty):
     puzzle[x1][y1] = 0
     return (puzzle, (x1, y1))
 
-def endPuzzle(size):
-    res = [ [(i+1)+(j*size) for i in range (size)] for j in range (size) ]
-    res[size-1][size-1] = 0
-    empty = (size-1, size-1)
-    return (res, empty)
-
 def randomPuzzle(size):
-    puzzle, empty = endPuzzle(size)
+    end = getFinalCoords(size)
+
+    puzzle = [[int(0) for _ in range(size)] for _ in range(size)]
+
+    x, y = 0, 0
+    for k, v in end.items():
+        x, y = v
+        puzzle[x][y] = k
+
+    empty = (x, y)
+    puzzle[x][y] = 0
+
     print("Puzzle initial")
     display(puzzle)
-    for i in range(1000):
+    print("Empty ", empty)
+    for _ in range(1000):
         puzzle, empty = randSwapEmpty(puzzle, size, empty)
     #     display(puzzle)
     print("Puzzle mixed")
@@ -120,7 +158,8 @@ def init():
         usage()
         sys.exit()
 
-    return (puzzle_size, puzzle, heuristic)
+    end = getFinalCoords(puzzle_size)
+    return (puzzle_size, puzzle, end, heuristic)
 
 def display(puzzle):
     s = ''

@@ -5,17 +5,26 @@ import json
 import time
 
 from operator import itemgetter
-import bisect
 
 import core
 
-def heuristic(puzzle_size, puzzle):
+def heuristic2(puzzle_size, puzzle, end):
     finalScore = 0
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
             if val != 0:
                 xtarget = int((val-1) / puzzle_size)
                 ytarget = int((val-1) % puzzle_size)
+                finalScore += abs(xtarget - x) + abs(ytarget - y)
+    return finalScore
+
+def heuristic(puzzle_size, puzzle, end):
+    finalScore = 0
+    for x, row in enumerate(puzzle):
+        for y, val in enumerate(row):
+            if val != 0:
+                xtarget = end[val][0]
+                ytarget = end[val][1]
                 finalScore += abs(xtarget - x) + abs(ytarget - y)
     return finalScore
 
@@ -78,10 +87,10 @@ def insert(a, x):
             hi = mid
     a.insert(lo, x)
 
-def solve(puzzle_size, start):
+def solve(puzzle_size, start, end):
     start_json = json.dumps(start)
 
-    start_fScore = heuristic(puzzle_size, start)
+    start_fScore = heuristic(puzzle_size, start, end)
 
     closedSet = {}
     openSet = [(start, start_fScore)]
@@ -95,7 +104,8 @@ def solve(puzzle_size, start):
         current, h = openSet[0]
         current_json = json.dumps(current)
 
-        if heuristic(puzzle_size, current) == 0:
+        if heuristic(puzzle_size, current, end) == 0:
+            p(current)
             print("FINISHED")
             return 1
 
@@ -113,7 +123,7 @@ def solve(puzzle_size, start):
                 gScore[neighbor_json] = tentative_gScore
                 fScore[neighbor_json] = (
                     gScore[neighbor_json] +
-                    heuristic(puzzle_size, neighbor)
+                    heuristic(puzzle_size, neighbor, end)
                 )
                 insert(openSet, (neighbor, fScore[neighbor_json]))
             elif tentative_gScore >= gScore[neighbor_json]:
