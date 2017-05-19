@@ -116,7 +116,9 @@ def solve(puzzle_size, start, end):
         score, current_json = openSet.get()
         current = openSetHash[current_json]
 
-        if heuristic(puzzle_size, current, end) == 0:
+        if fScore[current_json] - gScore[current_json] == 0:
+            p(current)
+            print(gScore[current_json])
             print("FINISHED")
             reconstruct(cameFrom, current)
             return 1
