@@ -118,7 +118,7 @@ def solve(puzzle_size, start, end):
                 continue
 
             tentative_gScore = gScore[current_json] + 1
-            if neighbor_json not in openSet:
+            if not any(s[0] == neighbor for s in openSet):
                 cameFrom[neighbor_json] = current
                 gScore[neighbor_json] = tentative_gScore
                 fScore[neighbor_json] = (
