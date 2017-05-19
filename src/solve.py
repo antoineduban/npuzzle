@@ -7,19 +7,53 @@ import core
 
 def getFinalCoords(puzzle_size, puzzle):
     nbs = (puzzle_size * puzzle_size) - 1
-
-
+    
     x = 0
     y = 0
+    lim = 0
+    ret = {}
+    count = 1
+    while True:
+        while x + 1 < puzzle_size - lim:
+            ret[count] = [y,x]
+            count += 1
+            x += 1
+        while y + 1< puzzle_size - lim:
+            ret[count] = [y,x]
+            count += 1
+            y += 1
+        while x - 1>= 0 + lim:
+            ret[count] = [y,x]
+            count += 1
+            x -= 1
+        while y - 1 >= 0 + lim:
+            ret[count] = [y,x]
+            count += 1
+            y -= 1
+        x += 1
+        y += 1
+        lim += 1
+        if x >= puzzle_size - lim and y >= puzzle_size - lim:
+                break
+    return ret
 
-def heuristic(puzzle_size, puzzle):
+def heuristic2(puzzle_size, puzzle, coords):
     finalScore = 0
-#    manhattan(puzzle_size, puzzle)
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
             if val != 0:
                 xtarget = int((val-1) / puzzle_size)
                 ytarget = int((val-1) % puzzle_size)
+                finalScore += abs(xtarget - x) + abs(ytarget - y)
+    return finalScore
+
+def heuristic(puzzle_size, puzzle, coords):
+    finalScore = 0
+    for x, row in enumerate(puzzle):
+        for y, val in enumerate(row):
+            if val != 0:
+                xtarget = coords[val][0]
+                ytarget = coords[val][1]
                 finalScore += abs(xtarget - x) + abs(ytarget - y)
     return finalScore
 
@@ -84,13 +118,14 @@ def solve(puzzle_size, start):
     gScore = defaultdict(lambda: 9999)
     gScore[start_json] = 0
     fScore = defaultdict(lambda: 9999)
-    fScore[start_json] = heuristic(puzzle_size, start)
+    coords = getFinalCoords(puzzle_size, start)
+    fScore[start_json] = heuristic(puzzle_size, start, coords)
 
     while openSet:
         current = getLowestFScore(puzzle_size, openSet, fScore)
         current_json = json.dumps(current)
 
-        if heuristic(puzzle_size, current) == 0:
+        if heuristic(puzzle_size, current, coords) == 0:
             p(current)
             print("FINISHED")
             return 1
@@ -110,7 +145,7 @@ def solve(puzzle_size, start):
 
             cameFrom[neighbor_json] = current
             gScore[neighbor_json] = tentative_gScore
-            fScore[neighbor_json] = gScore[neighbor_json] + heuristic(puzzle_size, s)
+            fScore[neighbor_json] = gScore[neighbor_json] + heuristic(puzzle_size, s, coords)
 
     print("FAILED")
     return -1
