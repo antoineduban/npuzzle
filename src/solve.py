@@ -5,6 +5,8 @@ from collections import defaultdict
 import json
 import time
 
+from queue import PriorityQueue
+
 from operator import itemgetter
 
 import core
@@ -79,12 +81,7 @@ def getNeighbors(puzzle_size, current):
 def p(puzzle):
     for x, row in enumerate(puzzle):
         print(row)
-
     print()
-
-def insert(a, x):
-    a.add(x)
-
 
 def solve(puzzle_size, start, end):
     p(start)
@@ -93,11 +90,10 @@ def solve(puzzle_size, start, end):
     start_fScore = heuristic(puzzle_size, start, end)
 
     closedSet = {}
-#    openSet = blist([(start, start_fScore)])
-    openSet = sortedlist([(start, start_fScore)], key=lambda i: i[1])
-
+    openSet = PriorityQueue()
+    openSet.put((start_fScore, start_json))
     openSetHash = {}
-    openSetHash[json.dumps(start)] = start
+    openSetHash[start_json] = start
     cameFrom = {}
     gScore = defaultdict(lambda: 9999)
     gScore[start_json] = 0
@@ -105,19 +101,18 @@ def solve(puzzle_size, start, end):
     fScore[start_json] = start_fScore
 
     while openSet:
-        current, h = openSet[0]
-        current_json = json.dumps(current)
+        score, current_json = openSet.get()
+        current = openSetHash[current_json]
 
         if heuristic(puzzle_size, current, end) == 0:
-
             p(current)
             print(gScore[current_json])
             print("FINISHED")
             return 1
 
-        openSet.pop(0)
         del openSetHash[current_json]
         closedSet[current_json] = current
+
         for neighbor in getNeighbors(puzzle_size, current):
             neighbor_json = json.dumps(neighbor)
             if neighbor_json in closedSet:
@@ -131,7 +126,7 @@ def solve(puzzle_size, start, end):
                     gScore[neighbor_json] +
                     heuristic(puzzle_size, neighbor, end)
                 )
-                insert(openSet, (neighbor, fScore[neighbor_json]))
+                openSet.put((fScore[neighbor_json], neighbor_json))
                 openSetHash[neighbor_json] = neighbor
             elif tentative_gScore >= gScore[neighbor_json]:
                 continue
