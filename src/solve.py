@@ -3,7 +3,7 @@ import time
 from collections import defaultdict
 import json
 import time
-
+import core
 
 def manhattan(puzzle_size, puzzle):
     nbs = (puzzle_size * puzzle_size) - 1
@@ -14,7 +14,6 @@ def manhattan(puzzle_size, puzzle):
     while puzzle[y]:
         while puzzle[y][x]:
             print(puzzle[y][x])
-
 
 def heuristic(puzzle_size, puzzle):
     finalScore = 0
@@ -27,47 +26,49 @@ def heuristic(puzzle_size, puzzle):
                 finalScore += abs(xtarget - x) + abs(ytarget - y)
     return finalScore
 
-def getLowestFScore(puzzle_size, openSet):
+def getLowestFScore(puzzle_size, openSet, fScore):
     lowest = 1000
     toReturn = None
     for s in openSet:
-        if heuristic(puzzle_size, s) < lowest:
-            lowest = heuristic(puzzle_size, s)
+        #h = heuristic(puzzle_size, s)
+        s_json = json.dumps(s)
+        if fScore[s_json] < lowest:
+        #if h < lowest:
+            lowest = fScore[s_json]
+            #lowest = h
             toReturn = s
     return toReturn
-        
+
+def isValid(x, y, puzzle_size):
+    return (x >= 0 and x < puzzle_size
+        and y >= 0 and y < puzzle_size)
+
+def findEmptyCase(puzzle):
+    for x, row in enumerate(puzzle):
+        for y, case in enumerate(row):
+            if case == 0:
+                return (x, y)
+    return None
+
 def getNeighbors(puzzle_size, current):
-    xcoord = -1
-    ycoord = -1
+    x0, y0 = findEmptyCase(current)
+
+    tests = [
+        (x0 + 1, y0),
+        (x0 - 1, y0),
+        (x0, y0 + 1),
+        (x0, y0 - 1)
+    ]
+
     newSets = []
-    for x, row in enumerate(current):
-        for y, val in enumerate(row):
-            if val == 0:
-                xcoord = x
-                ycoord = y
-                break
-        if xcoord != -1:
-            break
-    if (xcoord + 1 < puzzle_size): 
-        newSet = copy.deepcopy(current)
-        newSet[xcoord][ycoord] = newSet[xcoord + 1][ycoord]
-        newSet[xcoord + 1][ycoord] = 0
-        newSets.append(newSet)
-    if (xcoord - 1 >= 0): 
-        newSet = copy.deepcopy(current)
-        newSet[xcoord][ycoord] = newSet[xcoord - 1][ycoord]
-        newSet[xcoord - 1][ycoord] = 0
-        newSets.append(newSet)
-    if (ycoord + 1 < puzzle_size): 
-        newSet = copy.deepcopy(current)
-        newSet[xcoord][ycoord] = newSet[xcoord][ycoord + 1]
-        newSet[xcoord][ycoord + 1] = 0
-        newSets.append(newSet)
-    if (ycoord - 1 >= 0): 
-        newSet = copy.deepcopy(current)
-        newSet[xcoord][ycoord] = newSet[xcoord][ycoord - 1]
-        newSet[xcoord][ycoord - 1] = 0
-        newSets.append(newSet)
+    for test in tests:
+        x, y = test
+        if isValid(x, y, puzzle_size):
+            newSet = copy.deepcopy(current)
+            newSet[x0][y0] = newSet[x][y]
+            newSet[x][y] = 0
+            newSets.append(newSet)
+
     return newSets
 
 def p(puzzle):
@@ -75,7 +76,6 @@ def p(puzzle):
         print(row)
 
     print()
-
 
 def solve(puzzle_size, start):
     closedSet = []
@@ -87,7 +87,7 @@ def solve(puzzle_size, start):
     fScore[json.dumps(start)] = heuristic(puzzle_size, start)
 
     while openSet:
-        current = getLowestFScore(puzzle_size, openSet)
+        current = getLowestFScore(puzzle_size, openSet, fScore)
         if heuristic(puzzle_size, current) == 0:
             print("FINISHED")
             return 1
@@ -106,9 +106,5 @@ def solve(puzzle_size, start):
             gScore[json.dumps(s)] = tentative_gScore
             fScore[json.dumps(s)] = gScore[json.dumps(s)] + heuristic(puzzle_size, s)
 
-    
-
-    for Set in closedSet:
-        p(Set)
     print("FAILED")
     return -1
