@@ -5,9 +5,20 @@ import json
 import time
 
 
+def manhattan(puzzle_size, puzzle):
+    nbs = (puzzle_size * puzzle_size) - 1
+
+
+    x = 0
+    y = 0
+    while puzzle[y]:
+        while puzzle[y][x]:
+            print(puzzle[y][x])
+
 
 def heuristic(puzzle_size, puzzle):
     finalScore = 0
+    manhattan(puzzle_size, puzzle)
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
             if val != 0:
