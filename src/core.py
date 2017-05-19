@@ -36,7 +36,6 @@ def getFinalCoords(puzzle_size):
         del ret[puzzle_size * puzzle_size]
     except:
         pass
-    print(ret)
     return ret
 
 # Random puzzle gen
