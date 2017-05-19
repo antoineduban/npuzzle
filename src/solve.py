@@ -1,5 +1,5 @@
 import copy
-from blist import *
+from blist import sortedlist
 import time
 from collections import defaultdict
 import json
@@ -83,16 +83,7 @@ def p(puzzle):
     print()
 
 def insert(a, x):
-    keyfunc = lambda v: v[1]
-    lo = 0
-    hi = len(a)
-    while lo < hi:
-        mid = (lo+hi)//2
-        if keyfunc(a[mid]) < keyfunc(x):
-            lo = mid+1
-        else:
-            hi = mid
-    a.insert(lo, x)
+    a.add(x)
 
 
 def solve(puzzle_size, start, end):
@@ -102,7 +93,9 @@ def solve(puzzle_size, start, end):
     start_fScore = heuristic(puzzle_size, start, end)
 
     closedSet = {}
-    openSet = blist([(start, start_fScore)])
+#    openSet = blist([(start, start_fScore)])
+    openSet = sortedlist([(start, start_fScore)], key=lambda i: i[1])
+
     openSetHash = {}
     openSetHash[json.dumps(start)] = start
     cameFrom = {}
