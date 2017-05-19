@@ -82,8 +82,8 @@ def randomPuzzle(size):
     puzzle[x][y] = 0
 
     print("Puzzle initial")
-    display(puzzle)
     print("Empty ", empty)
+    display(puzzle)
     for _ in range(1000):
         puzzle, empty = randSwapEmpty(puzzle, size, empty)
     #     display(puzzle)
