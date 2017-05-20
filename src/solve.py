@@ -1,14 +1,12 @@
 import copy
+import math
 from blist import sortedlist
 import time
 from collections import defaultdict
 import json
 import time
-
 from queue import PriorityQueue
-
 from operator import itemgetter
-
 import core
 
 def heuristic2(puzzle_size, puzzle, end):
@@ -21,7 +19,7 @@ def heuristic2(puzzle_size, puzzle, end):
                 finalScore += abs(xtarget - x) + abs(ytarget - y)
     return finalScore
 
-def heuristic(puzzle_size, puzzle, end):
+def manhattan(puzzle_size, puzzle, end):
     finalScore = 0
     for x, row in enumerate(puzzle):
         for y, val in enumerate(row):
@@ -30,6 +28,35 @@ def heuristic(puzzle_size, puzzle, end):
                 ytarget = end[val][1]
                 finalScore += abs(xtarget - x) + abs(ytarget - y)
     return finalScore
+
+def euclidian(puzzle_size, puzzle, end):
+    finalScore = 0
+    for x, row in enumerate(puzzle):
+        for y, val in enumerate(row):
+            if val != 0:
+                xtarget = end[val][0]
+                ytarget = end[val][1]
+                finalScore += math.sqrt(math.pow(abs(xtarget - x), 2) + math.pow(abs(ytarget - y), 2))
+    return finalScore
+
+def misplaced(puzzle_size, puzzle, end):
+    finalScore = 0
+    for x, row in enumerate(puzzle):
+        for y, val in enumerate(row):
+            if val != 0:
+                xtarget = end[val][0]
+                ytarget = end[val][1]
+                if not (xtarget == x and ytarget == y):
+                    finalScore += 1
+    return finalScore
+
+def heuristicSelect(puzzle_size, puzzle, end, heuristic):
+    if heuristic == "manhattan":
+        return manhattan(puzzle_size, puzzle, end)
+    elif heuristic == "euclidian":
+        return euclidian(puzzle_size, puzzle, end)
+    elif heuristic == "misplaced":
+        return misplaced(puzzle_size, puzzle, end)
 
 def getLowestFScore(puzzle_size, openSet, fScore):
     lowest = 1000
@@ -95,11 +122,11 @@ def reconstruct(cameFrom, current):
     for i in reversed(total):
         p(i)
 
-def solve(puzzle_size, start, end):
+def solve(puzzle_size, start, end, heuristic):
     p(start)
     start_json = json.dumps(start)
 
-    start_fScore = heuristic(puzzle_size, start, end)
+    start_fScore = heuristicSelect(puzzle_size, start, end, heuristic)
 
     closedSet = {}
     openSet = PriorityQueue()
@@ -135,7 +162,7 @@ def solve(puzzle_size, start, end):
             if not neighbor_json in openSetHash:
                 cameFrom[neighbor_json] = current
                 gScore[neighbor_json] = tentative_gScore
-                fScore[neighbor_json] = heuristic(puzzle_size, neighbor, end)
+                fScore[neighbor_json] = heuristicSelect(puzzle_size, neighbor, end, heuristic)
                 openSet.put((fScore[neighbor_json], neighbor_json))
                 openSetHash[neighbor_json] = neighbor
             elif tentative_gScore >= gScore[neighbor_json]:

@@ -25,7 +25,7 @@ def main():
    #    [ 7, 8, 0]
    #]
 
-    solve.solve(size, start, end)
+    solve.solve(size, start, end, heuristic)
     print("Puzzle solved")
 
 main()
