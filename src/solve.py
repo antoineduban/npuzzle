@@ -112,6 +112,7 @@ def p(puzzle):
 
 def reconstruct(cameFrom, current):
     total = [current]
+    totalLen = 1
     while True:
         current_json = json.dumps(current)
         try:
@@ -119,39 +120,46 @@ def reconstruct(cameFrom, current):
         except:
             break
         total.append(current)
-    for i in reversed(total):
-        p(i)
+        totalLen += 1
+    return (totalLen, reversed(total))
 
 def solve(puzzle_size, start, end, heuristic):
-    p(start)
     start_json = json.dumps(start)
 
     start_fScore = heuristicSelect(puzzle_size, start, end, heuristic)
 
-    closedSet = {}
     openSet = PriorityQueue()
     openSet.put((start_fScore, start_json))
+    openSetLen = 1
     openSetHash = {}
     openSetHash[start_json] = start
+    closedSet = {}
+    closedSetLen = 0
     cameFrom = {}
     gScore = defaultdict(lambda: 9999)
     gScore[start_json] = 0
     fScore = defaultdict(lambda: 9999)
     fScore[start_json] = start_fScore
 
+    nSelectedStates = 0
+    nMaxStates = 0
+
     while openSet:
         score, current_json = openSet.get()
         current = openSetHash[current_json]
+        del openSetHash[current_json]
+        openSetLen -= 1
+        nSelectedStates += 1
+
+        nStates = openSetLen + closedSetLen
+        if nStates > nMaxStates:
+            nMaxStates = nStates
 
         if fScore[current_json] == 0:
-            p(current)
-            print(gScore[current_json])
-            print("FINISHED")
-            reconstruct(cameFrom, current)
-            return 1
+            return (nSelectedStates, nMaxStates, reconstruct(cameFrom, current))
 
-        del openSetHash[current_json]
         closedSet[current_json] = current
+        closedSetLen += 1
 
         for neighbor in getNeighbors(puzzle_size, current):
             neighbor_json = json.dumps(neighbor)
@@ -165,8 +173,8 @@ def solve(puzzle_size, start, end, heuristic):
                 fScore[neighbor_json] = heuristicSelect(puzzle_size, neighbor, end, heuristic)
                 openSet.put((fScore[neighbor_json], neighbor_json))
                 openSetHash[neighbor_json] = neighbor
+                openSetLen += 1
             elif tentative_gScore >= gScore[neighbor_json]:
                 continue
 
-    print("FAILED")
-    return -1
+    return None

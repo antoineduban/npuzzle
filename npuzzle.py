@@ -9,23 +9,12 @@ import solve
 
 def main():
     (size, start, end, heuristic) = core.init()
-
-    print("======================================")
-    #puzzle_size = 5
-    #res = [
-    #    [  1,  5,  3,  4,  2],
-    #    [ 16, 17, 18, 19,  6],
-    #    [ 15, 24, 25, 20,  7],
-    #    [ 14, 23, 22, 21,  8],
-    #    [ 13, 12, 11, 10,  9],
-    #]
-   #puzzle = [
-   #    [ 1, 2, 3],
-   #    [ 4, 5, 6],
-   #    [ 7, 8, 0]
-   #]
-
-    solve.solve(size, start, end, heuristic)
-    print("Puzzle solved")
+    nSelectedStates, nMaxStates, solution = solve.solve(size, start, end, heuristic)
+    nStates, solution = solution
+    print("Total number of states ever selected in open set: {:d}".format(nSelectedStates))
+    print("Maximum number of states ever represented in memory at the same time: {:d}".format(nMaxStates))
+    print("Number of moves required to solve the puzzle: {:d}".format(nStates))
+    for state in solution:
+        core.display(state)
 
 main()
