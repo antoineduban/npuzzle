@@ -38,18 +38,18 @@ def isSolvable(snailPuzzle, size, endDic):
     return startInversions % 2 == endInversions % 2
 
 def main():
-    (size, start, end, heuristic) = core.init()
+    (size, start, end, heuristic, force) = core.init()
 
     if not isSolvable(start, size, end):
         print("This puzzle is not solvable")
         sys.exit()
 
-    nSelectedStates, nMaxStates, solution = solve.solve(size, start, end, heuristic)
+    nSelectedStates, nMaxStates, solution = solve.solve(size, start, end, heuristic, force)
     nStates, solution = solution
+    for state in solution:
+        core.display(state)
     print("Total number of states ever selected in open set: {:d}".format(nSelectedStates))
     print("Maximum number of states ever represented in memory at the same time: {:d}".format(nMaxStates))
     print("Number of moves required to solve the puzzle: {:d}".format(nStates))
-    for state in solution:
-        core.display(state)
 
 main()

@@ -38,6 +38,15 @@ def getFinalCoords(puzzle_size):
         pass
     return ret
 
+def getClassicFinalCoords(puzzle_size):
+    val = 1
+    ret = {}
+    while val < puzzle_size * puzzle_size:
+        ret[val] = [(val-1) // puzzle_size, (val-1) % puzzle_size]
+        val += 1
+    return ret
+    
+
 def findEmpty(puzzle):
     for x, row in enumerate(puzzle):
         for y, case in enumerate(row):
@@ -68,8 +77,11 @@ def randSwapEmpty(puzzle, puzzle_size, empty):
     puzzle[x1][y1] = 0
     return (puzzle, (x1, y1))
 
-def randomPuzzle(size):
-    end = getFinalCoords(size)
+def randomPuzzle(size, classic):
+    if classic:
+        end = getClassicFinalCoords(size)
+    else:
+        end = getFinalCoords(size)
 
     puzzle = [[int(0) for _ in range(size)] for _ in range(size)]
 
@@ -120,12 +132,12 @@ def puzzle_of_file(filename):
     return (puzzle_size, puzzle)
 
 def usage():
-    print('{:s} [-h] [-r|-i <file>] [-e euclidian|manhattan|misplaced]'.format(sys.argv[0]))
+    print('{:s} [-h] [-r|-i <file>] [-e euclidian|manhattan|misplaced] [-f 0|1|2] [-c]'.format(sys.argv[0]))
 
 def init():
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hr:i:e:", ["rand", "help", "input=", "heuristic="])
+        opts, args = getopt.getopt(sys.argv[1:], "hr:i:e:s:c", ["rand", "help", "input=", "heuristic=", "speed=", "classic"])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -134,10 +146,15 @@ def init():
     puzzle_size = 0
     puzzle = None
     heuristic = None
+    force = "0"
+    classic = False
+    randomize = False
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             usage()
             sys.exit()
+        elif opt in ("-c", "--classic"):
+            classic = True
         elif opt in ("-i", "--input"):
             if puzzle_size != 0:
                 usage()
@@ -156,22 +173,33 @@ def init():
             except Exception as err:
                 print(str(err))
                 sys.exit()
-            puzzle = randomPuzzle(puzzle_size)
+            randomize = True
         elif opt in ("-e", "--heuristic"):
             heuristic = arg
             if heuristic != "manhattan" and heuristic != "euclidian" and heuristic != "misplaced":
+                usage()
+                sys.exit(1)
+        elif opt in ("-s", "--speed"):
+            force = arg
+            if force != "0" and force != "1" and force != "2":
                 usage()
                 sys.exit(1)
         else:
             usage()
             sys.exit(1)
 
+    if randomize:
+        puzzle = randomPuzzle(puzzle_size, classic)
     if puzzle is None:
         usage()
         sys.exit()
-
-    end = getFinalCoords(puzzle_size)
-    return (puzzle_size, puzzle, end, heuristic)
+    if heuristic == None:
+        heuristic = "manhattan"
+    if classic:
+        end = getClassicFinalCoords(puzzle_size)
+    else:
+        end = getFinalCoords(puzzle_size)
+    return (puzzle_size, puzzle, end, heuristic, force)
 
 def display(puzzle):
     s = ''

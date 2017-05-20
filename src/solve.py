@@ -123,7 +123,7 @@ def reconstruct(cameFrom, current):
         totalLen += 1
     return (totalLen, reversed(total))
 
-def solve(puzzle_size, start, end, heuristic):
+def solve(puzzle_size, start, end, heuristic, force):
     start_json = json.dumps(start)
 
     start_fScore = heuristicSelect(puzzle_size, start, end, heuristic)
@@ -155,8 +155,12 @@ def solve(puzzle_size, start, end, heuristic):
         if nStates > nMaxStates:
             nMaxStates = nStates
 
-        if fScore[current_json] == 0:
-            return (nSelectedStates, nMaxStates, reconstruct(cameFrom, current))
+        if force == "0":
+            if fScore[current_json] == gScore[current_json]:
+                return (nSelectedStates, nMaxStates, reconstruct(cameFrom, current))
+        else:
+            if fScore[current_json] == 0:
+                return (nSelectedStates, nMaxStates, reconstruct(cameFrom, current))
 
         closedSet[current_json] = current
         closedSetLen += 1
@@ -170,7 +174,12 @@ def solve(puzzle_size, start, end, heuristic):
             if not neighbor_json in openSetHash:
                 cameFrom[neighbor_json] = current
                 gScore[neighbor_json] = tentative_gScore
-                fScore[neighbor_json] = heuristicSelect(puzzle_size, neighbor, end, heuristic)
+                if force == "0":
+                    fScore[neighbor_json] = gScore[neighbor_json] + heuristicSelect(puzzle_size, neighbor, end, heuristic)
+                elif force == "1":
+                    fScore[neighbor_json] = gScore[neighbor_json] * heuristicSelect(puzzle_size, neighbor, end, heuristic)
+                elif force == "2":
+                    fScore[neighbor_json] = heuristicSelect(puzzle_size, neighbor, end, heuristic)
                 openSet.put((fScore[neighbor_json], neighbor_json))
                 openSetHash[neighbor_json] = neighbor
                 openSetLen += 1
