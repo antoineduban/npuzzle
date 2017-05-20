@@ -9,7 +9,7 @@ import solve
 
 def main():
     (size, start, end, heuristic) = core.init()
-    nSelectedStates, nMaxStates, solution = solve.solve(size, start, end)
+    nSelectedStates, nMaxStates, solution = solve.solve(size, start, end, heuristic)
     nStates, solution = solution
     print("Total number of states ever selected in open set: {:d}".format(nSelectedStates))
     print("Maximum number of states ever represented in memory at the same time: {:d}".format(nMaxStates))

@@ -120,7 +120,7 @@ def puzzle_of_file(filename):
     return (puzzle_size, puzzle)
 
 def usage():
-    print('{:s} [-h] [-r|-i <file>]'.format(sys.argv[0]))
+    print('{:s} [-h] [-r|-i <file>] [-e euclidian|manhattan|misplaced]'.format(sys.argv[0]))
 
 def init():
 
@@ -159,6 +159,9 @@ def init():
             puzzle = randomPuzzle(puzzle_size)
         elif opt in ("-e", "--heuristic"):
             heuristic = arg
+            if heuristic != "manhattan" and heuristic != "euclidian" and heuristic != "misplaced":
+                usage()
+                sys.exit(1)
         else:
             usage()
             sys.exit(1)
