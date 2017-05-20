@@ -120,7 +120,7 @@ def puzzle_of_file(filename):
     return (puzzle_size, puzzle)
 
 def usage():
-    print('{:s} [-h] [-r|-i <file>] [-e euclidian|manhattan|misplaced]'.format(sys.argv[0]))
+    print('{:s} [-h] [-r|-i <file>] [-e euclidian|manhattan|misplaced] [-f]'.format(sys.argv[0]))
 
 def init():
 
