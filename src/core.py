@@ -125,7 +125,7 @@ def usage():
 def init():
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hr:i:e:", ["rand", "help", "input=", "heuristic="])
+        opts, args = getopt.getopt(sys.argv[1:], "hr:i:e:f", ["rand", "help", "input=", "heuristic=", "force"])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -134,6 +134,7 @@ def init():
     puzzle_size = 0
     puzzle = None
     heuristic = None
+    force = False
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             usage()
@@ -162,6 +163,8 @@ def init():
             if heuristic != "manhattan" and heuristic != "euclidian" and heuristic != "misplaced":
                 usage()
                 sys.exit(1)
+        elif opt in ("-f", "--force"):
+            force = True
         else:
             usage()
             sys.exit(1)
@@ -172,7 +175,7 @@ def init():
     if heuristic == None:
         heuristic = "manhattan"
     end = getFinalCoords(puzzle_size)
-    return (puzzle_size, puzzle, end, heuristic)
+    return (puzzle_size, puzzle, end, heuristic, force)
 
 def display(puzzle):
     s = ''
