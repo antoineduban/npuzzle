@@ -120,12 +120,12 @@ def puzzle_of_file(filename):
     return (puzzle_size, puzzle)
 
 def usage():
-    print('{:s} [-h] [-r|-i <file>] [-e euclidian|manhattan|misplaced] [-f]'.format(sys.argv[0]))
+    print('{:s} [-h] [-r|-i <file>] [-e euclidian|manhattan|misplaced] [-f 0|1|2]'.format(sys.argv[0]))
 
 def init():
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hr:i:e:f", ["rand", "help", "input=", "heuristic=", "force"])
+        opts, args = getopt.getopt(sys.argv[1:], "hr:i:e:s:", ["rand", "help", "input=", "heuristic=", "speed="])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -134,7 +134,7 @@ def init():
     puzzle_size = 0
     puzzle = None
     heuristic = None
-    force = False
+    force = "0"
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             usage()
@@ -163,8 +163,11 @@ def init():
             if heuristic != "manhattan" and heuristic != "euclidian" and heuristic != "misplaced":
                 usage()
                 sys.exit(1)
-        elif opt in ("-f", "--force"):
-            force = True
+        elif opt in ("-s", "--speed"):
+            force = arg
+            if force != "0" and force != "1" and force != "2":
+                usage()
+                sys.exit(1)
         else:
             usage()
             sys.exit(1)

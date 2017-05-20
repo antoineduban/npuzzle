@@ -155,7 +155,7 @@ def solve(puzzle_size, start, end, heuristic, force):
         if nStates > nMaxStates:
             nMaxStates = nStates
 
-        if not force:
+        if force == "0":
             if fScore[current_json] == gScore[current_json]:
                 return (nSelectedStates, nMaxStates, reconstruct(cameFrom, current))
         else:
@@ -174,9 +174,11 @@ def solve(puzzle_size, start, end, heuristic, force):
             if not neighbor_json in openSetHash:
                 cameFrom[neighbor_json] = current
                 gScore[neighbor_json] = tentative_gScore
-                if not force:
+                if force == "0":
                     fScore[neighbor_json] = gScore[neighbor_json] + heuristicSelect(puzzle_size, neighbor, end, heuristic)
-                else:
+                elif force == "1":
+                    fScore[neighbor_json] = gScore[neighbor_json] * heuristicSelect(puzzle_size, neighbor, end, heuristic)
+                elif force == "2":
                     fScore[neighbor_json] = heuristicSelect(puzzle_size, neighbor, end, heuristic)
                 openSet.put((fScore[neighbor_json], neighbor_json))
                 openSetHash[neighbor_json] = neighbor
