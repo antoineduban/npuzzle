@@ -169,7 +169,8 @@ def init():
     if puzzle is None:
         usage()
         sys.exit()
-
+    if heuristic == None:
+        heuristic = "manhattan"
     end = getFinalCoords(puzzle_size)
     return (puzzle_size, puzzle, end, heuristic)
 
