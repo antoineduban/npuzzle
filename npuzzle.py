@@ -8,48 +8,54 @@ import core
 import solve
 
 def inversions(puzzle):
-    total = 0
-    for i in range(len(puzzle)):
-        if puzzle[i] == 0:
-            continue
-        count = 0
-        for j in range(i, len(puzzle)):
-            if puzzle[i] > puzzle[j] and puzzle[j] != 0:
-                count += 1
-        total += count
-    return total
+	total = 0
+	z = 0
+	for i in range(len(puzzle)):
+		if puzzle[i] == 0:
+			z += 1
+			if (z == 2):
+				return -1
+			continue
+		count = 0
+		for j in range(i, len(puzzle)):
+			if puzzle[i] > puzzle[j] and puzzle[j] != 0:
+				count += 1
+		total += count
+	return total
 
 def isSolvable(snailPuzzle, size, endDic):
 
-    start = [c for row in snailPuzzle for c in row]
-    endSnailPuzzle = [[0 for _ in range(size)] for _ in range(size)]
-    for i, pt in endDic.items():
-        x, y = pt
-        endSnailPuzzle[x][y] = i
-    end = [c for row in endSnailPuzzle for c in row]
+	start = [c for row in snailPuzzle for c in row]
+	endSnailPuzzle = [[0 for _ in range(size)] for _ in range(size)]
+	for i, pt in endDic.items():
+		x, y = pt
+		endSnailPuzzle[x][y] = i
+	end = [c for row in endSnailPuzzle for c in row]
 
-    startInversions = inversions(start)
-    endInversions = inversions(end)
+	startInversions = inversions(start)
+	if startInversions == -1:
+		return False
+	endInversions = inversions(end)
 
-    if size % 2 == 0:
-        startInversions += start.index(0) // size
-        endInversions += end.index(0) // size
+	if size % 2 == 0:
+		startInversions += start.index(0) // size
+		endInversions += end.index(0) // size
 
-    return startInversions % 2 == endInversions % 2
+	return startInversions % 2 == endInversions % 2
 
 def main():
-    (size, start, end, heuristic, force) = core.init()
+	(size, start, end, heuristic, force) = core.init()
 
-    if not isSolvable(start, size, end):
-        print("This puzzle is not solvable")
-        sys.exit()
+	if not isSolvable(start, size, end):
+		print("This puzzle is not solvable")
+		sys.exit()
 
-    nSelectedStates, nMaxStates, solution = solve.solve(size, start, end, heuristic, force)
-    nStates, solution = solution
-    for state in solution:
-        core.display(state)
-    print("Total number of states ever selected in open set: {:d}".format(nSelectedStates))
-    print("Maximum number of states ever represented in memory at the same time: {:d}".format(nMaxStates))
-    print("Number of moves required to solve the puzzle: {:d}".format(nStates))
+	nSelectedStates, nMaxStates, solution = solve.solve(size, start, end, heuristic, force)
+	nStates, solution = solution
+	for state in solution:
+		core.display(state)
+	print("Total number of states ever selected in open set: {:d}".format(nSelectedStates))
+	print("Maximum number of states ever represented in memory at the same time: {:d}".format(nMaxStates))
+	print("Number of moves required to solve the puzzle: {:d}".format(nStates))
 
 main()
