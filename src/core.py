@@ -60,8 +60,8 @@ def isValid(p, puzzle_size):
 	return (x >= 0 and x < puzzle_size
 			and y >= 0 and y < puzzle_size)
 
-	def randMove(p, puzzle_size):
-		x0, y0 = p
+def randMove(p, puzzle_size):
+	x0, y0 = p
 	x = 0
 	y = 0
 	while not (isValid((x0+x, y0+y), puzzle_size)
